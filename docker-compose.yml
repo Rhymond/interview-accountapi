@@ -1,6 +1,14 @@
 version: '3'
 
 services:
+  tests:
+    image: golang:1.13.1-stretch
+    depends_on:
+      - accountapi
+    volumes:
+      - .:/go/src/github.com/form3/interview-accountapi
+    working_dir: /go/src/github.com/form3/interview-accountapi
+    command: sh -c "go get ./... && go test --cover -v ./..."
   accountapi:
     image: form3tech/interview-accountapi:v1.0.0-4-g63cf8434
     restart: on-failure
