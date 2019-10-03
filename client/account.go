@@ -61,11 +61,12 @@ func (s *AccountService) Fetch(ctx context.Context, id string) (*models.Account,
 
 // Delete an account using the account ID.
 func (s *AccountService) Delete(ctx context.Context, id string) (*Response, error) {
-	path := fmt.Sprintf("v1/organisation/accounts/%s", id)
+	path := fmt.Sprintf("v1/organisation/accounts/%s?version=0", id)
 	req, err := s.client.NewRequest(ctx, http.MethodDelete, path, nil)
 	if err != nil {
 		return nil, err
 	}
 	var accounts []models.Account
-	return s.client.Do(ctx, req, accounts)
+	resp, err := s.client.Do(ctx, req, accounts)
+	return resp, err
 }

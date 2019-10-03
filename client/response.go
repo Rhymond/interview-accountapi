@@ -42,14 +42,14 @@ func (l *Links) IsLastPage() bool {
 	if l == nil {
 		return true
 	}
-	return l.Last == ""
+	return l.Next == ""
 }
 
 // Response is API HTTP response.
 type Response struct {
 	Response *http.Response
 	Data     json.RawMessage `json:"data"`
-	Links    Links           `json:"links"`
+	Links    Links           `json:"links,omitempty"`
 }
 
 // NewResponse creates a new Response for the provided http.Response

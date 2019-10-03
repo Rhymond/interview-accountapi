@@ -1,12 +1,13 @@
 package models
 
-// An Account represents a bank account that is registered with Form3.
+// Account represents a bank account that is registered with Form3.
 // It is used to validate and allocate inbound payments.
 type Account struct {
 	Attributes     AccountAttributes `json:"attributes"`
 	ID             string            `json:"id"`
 	OrganisationID string            `json:"organisation_id"`
 	Type           string            `json:"type"`
+	Version        int               `json:"version"`
 }
 
 // AccountAttributes represents account attributes.

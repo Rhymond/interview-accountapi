@@ -1,14 +1,6 @@
 version: '3'
 
 services:
-  tests:
-    image: golang:1.13.1-stretch
-    depends_on:
-      - accountapi
-    volumes:
-      - .:/go/src/github.com/form3/interview-accountapi
-    working_dir: /go/src/github.com/form3/interview-accountapi
-    command: sh -c "go get ./... && go test --cover -v ./..."
   accountapi:
     image: form3tech/interview-accountapi:v1.0.0-4-g63cf8434
     restart: on-failure
@@ -42,6 +34,21 @@ services:
       - POSTGRES_PASSWORD=password
     volumes:
       - ./scripts/db:/docker-entrypoint-initdb.d/
+
+  tests:
+    build: .
+    links:
+      - accountapi
+    depends_on:
+      - accountapi
+    volumes:
+      - .:/go/src/github.com/form3/interview-accountapi
+    working_dir: /go/src/github.com/form3/interview-accountapi
+    environment:
+      - ACCOUNT_API_ADDR=http://accountapi:8080
+    command: >
+      bash -c "go get ./... &&
+      go test --cover -v -tags integration ./..."
 
   vault:
     image: vault:0.9.3

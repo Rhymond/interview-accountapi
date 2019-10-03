@@ -92,7 +92,7 @@ func TestLinks_IsLastPage(t *testing.T) {
 			expectedIsLast: true,
 		},
 		{
-			name: "it should set last page to false when last page is given",
+			name: "it should set last page to false when next page is given",
 			givenLinks: &Links{
 				Self:  "/subscriptions?page[number]=1&page[size]=2",
 				Next:  "/subscriptions?page[number]=2&page[size]=2",
@@ -102,10 +102,10 @@ func TestLinks_IsLastPage(t *testing.T) {
 			expectedIsLast: false,
 		},
 		{
-			name: "it should set last page to true when last page is not set",
+			name: "it should set last page to true when next page is not set",
 			givenLinks: &Links{
 				Self:  "/subscriptions?page[number]=1&page[size]=2",
-				Next:  "/subscriptions?page[number]=2&page[size]=2",
+				Prev:  "/subscriptions?page[number]=2&page[size]=2",
 				First: "/subscriptions?page[number]=1&page[size]=2",
 			},
 			expectedIsLast: true,

@@ -123,24 +123,24 @@ func (c *Client) Do(ctx context.Context, req *http.Request, v interface{}) (*Res
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil || len(data) == 0 {
-		return nil, err
+		return r, err
 	}
 	err = json.Unmarshal(data, r)
 	if err != nil {
-		return nil, err
+		return r, err
 	}
 
 	if v != nil {
 		err = json.Unmarshal(r.Data, v)
 		if err != nil {
-			return nil, err
+			return r, err
 		}
 	}
 
 	return r, err
 }
 
-// CheckResponse checks the API response for errors, and returns them if present. A response is considered an
+// checkResponse checks the API response for errors, and returns them if present. A response is considered an
 // error if it has a status code outside the 200 range. API error responses are expected to have JSON response body that maps to ErrorResponse. Any other response body will be silently ignored.
 func checkResponse(r *http.Response) error {
 	if c := r.StatusCode; c >= 200 && c <= 299 {

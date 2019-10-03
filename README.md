@@ -1,4 +1,23 @@
-# Form3 Take Home Exercise
+# Technical decisions
+
+1. Run and quickly analysed `docker-compose.yml` to make sure everything runs on my environment and it don't fail.
+2. Download postman templates from [account API](http://api-docs.form3.tech/api.html#organisation-accounts), changed environment in Postman to point to my localhost. Manually examined given fake api using postman and made couple of calls to see how it works.
+3. Added golang container to `docker-compose.yml` and created a small test, then run `docker-compose up` to make sure containers are not conflicting and tests runs without issues.
+4. Built general API client to make HTTP calls to api. 
+5. Built AccountService for API client and implemented `Create`, `Fetch`, `List` and `Delete` operations using Account resource.
+6. Implemented integration tests (in `/tests` dir) using gherkin syntax and `godog` package to run them.
+7. Linted code using `revive` and fixed linting issues.
+8. `git push`
+
+# Tips
+* To run all tests including integration tests use `tags`:
+
+```bash
+go test --cover -v -tags integration
+```
+
+
+# Exercise
 
 ## Instructions
 

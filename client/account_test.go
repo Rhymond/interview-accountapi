@@ -118,7 +118,7 @@ func TestAccountService_CreateRequest(t *testing.T) {
 				OrganisationID: "organisation-id",
 				Type:           "account-type",
 			},
-			expectedBody: `{"data":{"attributes":{"country":"GB","account_number":"1234"},"id":"account-id","organisation_id":"organisation-id","type":"account-type"}}`,
+			expectedBody: `{"data":{"attributes":{"country":"GB","account_number":"1234"},"id":"account-id","organisation_id":"organisation-id","type":"account-type","version":0}}`,
 		},
 	}
 	for _, test := range tests {
@@ -282,19 +282,19 @@ func TestAccountService_ListResponseError(t *testing.T) {
 		expectedError   string
 	}{
 		{
-			name:            "should return error on malformed response",
+			name:            "it should return error on malformed response",
 			givenResponse:   `not-a-json`,
 			givenStatusCode: http.StatusOK,
 			expectedError:   "invalid character 'o' in literal null (expecting 'u')",
 		},
 		{
-			name:            "should return error on empty response",
+			name:            "it should return error on empty response",
 			givenResponse:   `{}`,
 			givenStatusCode: http.StatusOK,
 			expectedError:   "unexpected end of JSON input",
 		},
 		{
-			name: "should return custom api error on internal server error status",
+			name: "it should return custom api error on internal server error status",
 			givenResponse: `{
 				"error_message": "custom error message"
 			}`,
@@ -327,25 +327,64 @@ func TestAccountService_ListResponseSuccess(t *testing.T) {
 		expectedError        string
 	}{
 		{
-			name: "should return empty list of accounts on valid response with empty data",
+			name: "it should return empty list of accounts on valid response with null data",
 			givenResponse: `{
-				"data": [],
-				"links": {
-					"self": "/v1/organisation/accounts/b8952241-a065-462e-a7d2-6a9c94010f0f"
-				}
+				"data": null
 			}`,
 			expectedAccountCount: 0,
-			expectedAccountIDs: []string{},
+			expectedAccountIDs:   []string{},
 		},
 		{
-			name: "should return empty list of accounts on valid response with empty data",
+			name: "it should return list of accounts on given valid response",
 			givenResponse: `{
 				"data": [
 					{
-						"id": "account-id-1"
+						"attributes": {
+							"account_classification": "Personal",
+							"account_matching_opt_out": false,
+							"account_number": "10000004",
+							"alternative_bank_account_names": [],
+							"bank_id": "400302",
+							"bank_id_code": "GBDSC",
+							"base_currency": "GBP",
+							"bic": "NWBKGB42",
+							"country": "GB",
+							"customer_id": "234",
+							"first_name": "Mary-Jane Doe",
+							"iban": "GB28NWBK40030212764204",
+							"joint_account": false,
+							"title": "Sir"
+						},
+						"created_on": "2019-10-03T18:09:42.257Z",
+						"id": "bdf9e1a8-481e-483f-b54c-7103cffceb21",
+						"modified_on": "2019-10-03T18:09:42.257Z",
+						"organisation_id": "7c3d20ff-ed78-45c4-aae0-0184cf6d3060",
+						"type": "accounts",
+						"version": 0
 					},
 					{
-						"id": "account-id-2"
+						"attributes": {
+							"account_classification": "Personal",
+							"account_matching_opt_out": false,
+							"account_number": "10000004",
+							"alternative_bank_account_names": [],
+							"bank_id": "400302",
+							"bank_id_code": "GBDSC",
+							"base_currency": "GBP",
+							"bic": "NWBKGB42",
+							"country": "GB",
+							"customer_id": "234",
+							"first_name": "Mary-Jane Doe",
+							"iban": "GB28NWBK40030212764204",
+							"joint_account": false,
+							"title": "Sir"
+						},
+						"created_on": "2019-10-03T18:09:43.501Z",
+						"id": "63c0a226-5b6c-4ef9-a0bb-436dd39d45bb",
+						"modified_on": "2019-10-03T18:09:43.501Z",
+						"organisation_id": "8d0f39dd-6c17-4720-915e-7a015dda9f47",
+						"type": "accounts",
+						"version": 0
 					}
 				],
 				"links": {
@@ -353,7 +392,7 @@ func TestAccountService_ListResponseSuccess(t *testing.T) {
 				}
 			}`,
 			expectedAccountCount: 2,
-			expectedAccountIDs: []string{"account-id-1", "account-id-2"},
+			expectedAccountIDs:   []string{"bdf9e1a8-481e-483f-b54c-7103cffceb21", "63c0a226-5b6c-4ef9-a0bb-436dd39d45bb"},
 		},
 	}
 	for _, test := range tests {
