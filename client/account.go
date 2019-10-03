@@ -8,6 +8,7 @@ import (
 	"github.com/rhymond/interview-accountapi/models"
 )
 
+// AccountService holds API functionality for accounts API.
 type AccountService struct {
 	client *Client
 }

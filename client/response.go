@@ -8,6 +8,7 @@ import (
 	"strconv"
 )
 
+// Links holds information about response pagination.
 type Links struct {
 	First string `json:"first"`
 	Last  string `json:"last"`
@@ -16,6 +17,8 @@ type Links struct {
 	Self  string `json:"self"`
 }
 
+// CurrentPage returns current page from given response.
+// if prev link URL is invalid it throws an error.
 func (l *Links) CurrentPage() (int, error) {
 	switch {
 	case l == nil:
@@ -34,6 +37,7 @@ func (l *Links) CurrentPage() (int, error) {
 	return 0, nil
 }
 
+// IsLastPage check if page is last.
 func (l *Links) IsLastPage() bool {
 	if l == nil {
 		return true
@@ -41,8 +45,8 @@ func (l *Links) IsLastPage() bool {
 	return l.Last == ""
 }
 
+// Response is API HTTP response.
 type Response struct {
-	// Original response
 	Response *http.Response
 	Data     json.RawMessage `json:"data"`
 	Links    Links           `json:"links"`
@@ -55,14 +59,16 @@ func NewResponse(r *http.Response) *Response {
 	return &response
 }
 
+// ErrorResponse is a custom error structure for API errors.
+// It hold HTTP response that caused error and has all given details about an error.
 type ErrorResponse struct {
-	// HTTP response that caused this error
 	Response   *http.Response
 	StatusCode int
 	Code       string `json:"error_code"`
 	Message    string `json:"error_message"`
 }
 
+// Error is required to be implemented to meet error interface
 func (e *ErrorResponse) Error() string {
 	return fmt.Sprintf("code: %d, message: %s", e.StatusCode, e.Message)
 }

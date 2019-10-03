@@ -117,9 +117,8 @@ func TestAccountService_CreateRequest(t *testing.T) {
 				ID:             "account-id",
 				OrganisationID: "organisation-id",
 				Type:           "account-type",
-				Version:        1,
 			},
-			expectedBody: `{"data":{"attributes":{"account_number":"1234","country":"GB"},"id":"account-id","organisation_id":"organisation-id","type":"account-type","version":1}}`,
+			expectedBody: `{"data":{"attributes":{"country":"GB","account_number":"1234"},"id":"account-id","organisation_id":"organisation-id","type":"account-type"}}`,
 		},
 	}
 	for _, test := range tests {
@@ -324,6 +323,7 @@ func TestAccountService_ListResponseSuccess(t *testing.T) {
 		name                 string
 		givenResponse        string
 		expectedAccountCount int
+		expectedAccountIDs   []string
 		expectedError        string
 	}{
 		{
@@ -335,6 +335,7 @@ func TestAccountService_ListResponseSuccess(t *testing.T) {
 				}
 			}`,
 			expectedAccountCount: 0,
+			expectedAccountIDs: []string{},
 		},
 		{
 			name: "should return empty list of accounts on valid response with empty data",
@@ -352,6 +353,7 @@ func TestAccountService_ListResponseSuccess(t *testing.T) {
 				}
 			}`,
 			expectedAccountCount: 2,
+			expectedAccountIDs: []string{"account-id-1", "account-id-2"},
 		},
 	}
 	for _, test := range tests {
@@ -367,48 +369,14 @@ func TestAccountService_ListResponseSuccess(t *testing.T) {
 			accs, _, err := client.Account.List(context.TODO(), nil)
 			if assert.Nil(t, err) {
 				assert.Equal(t, test.expectedAccountCount, len(accs))
+
+				accsids := make([]string, len(accs))
+				for i, acc := range accs {
+					accsids[i] = acc.ID
+				}
+
+				assert.Equal(t, test.expectedAccountIDs, accsids)
 			}
-		})
-	}
-}
-
-func TestAccountService_ListRequestPagination(t *testing.T) {
-	tests := []struct {
-		name            string
-		givenPagination *Pagination
-		expectedURL     string
-	}{
-		{
-			name: "it should include page number to URL",
-			givenPagination: &Pagination{
-				Page: 1,
-			},
-			expectedURL: "/v1/organisation/accounts?page%5Bnumber%5D=1",
-		},
-		{
-			name: "it should include page size and number to URL",
-			givenPagination: &Pagination{
-				Page:    1,
-				PerPage: 10,
-			},
-			expectedURL: "/v1/organisation/accounts?page%5Bnumber%5D=1&page%5Bsize%5D=10",
-		},
-	}
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			router, server, client := createTestServer()
-			defer server.Close()
-			var isCalled bool
-
-			router.HandleFunc("/v1/organisation/accounts", func(w http.ResponseWriter, r *http.Request) {
-				isCalled = true
-				assert.Equal(t, test.expectedURL, r.URL.String())
-				w.WriteHeader(http.StatusOK)
-			}).Methods(http.MethodGet)
-
-			_, _, err := client.Account.List(context.TODO(), test.givenPagination)
-			assert.Nil(t, err)
-			assert.True(t, isCalled)
 		})
 	}
 }

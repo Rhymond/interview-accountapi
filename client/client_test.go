@@ -14,23 +14,23 @@ import (
 func TestNewClient(t *testing.T) {
 	tests := []struct {
 		name               string
-		givenHttpClient    *http.Client
-		expectedHttpClient *http.Client
+		givenHTTPClient    *http.Client
+		expectedHTTPClient *http.Client
 	}{
 		{
 			name:               "it should set httpclient to default client if given http client is nil",
-			givenHttpClient:    nil,
-			expectedHttpClient: http.DefaultClient,
+			givenHTTPClient:    nil,
+			expectedHTTPClient: http.DefaultClient,
 		},
 		{
 			name: "it should set httpclient to a given http client",
-			givenHttpClient: &http.Client{
+			givenHTTPClient: &http.Client{
 				Transport:     nil,
 				CheckRedirect: nil,
 				Jar:           nil,
 				Timeout:       20,
 			},
-			expectedHttpClient: &http.Client{
+			expectedHTTPClient: &http.Client{
 				Transport:     nil,
 				CheckRedirect: nil,
 				Jar:           nil,
@@ -40,8 +40,8 @@ func TestNewClient(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			actualClient := NewClient(test.givenHttpClient, nil)
-			assert.Equal(t, actualClient.httpClient, test.expectedHttpClient)
+			actualClient := NewClient(test.givenHTTPClient, nil)
+			assert.Equal(t, actualClient.httpClient, test.expectedHTTPClient)
 		})
 	}
 }
